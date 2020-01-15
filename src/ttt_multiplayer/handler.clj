@@ -13,9 +13,11 @@
 (defn make-move
   [request]
   (let [position (read-string ((:body request) "position"))]
-    (do (swap! game-state (partial game/place-move position))
-        (swap! game-state game/change-round)
-        (get-game))))
+    (if (game/game-over? @game-state)
+      "game has already finished"
+      (do (swap! game-state (partial game/place-move position))
+          (swap! game-state game/change-round)
+          (get-game)))))
 
 (defroutes app-routes
            (GET "/" [] (get-game))
